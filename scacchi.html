@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Arena - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>.cell-chess { aspect-ratio:1; display:flex; items-center; justify-content:center; font-size:1.8rem; cursor:pointer; }</style>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[480px] bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-3">
+            <h1 class="text-sm font-black text-slate-400">👑 8. SCACCHI PROFESSIONAL</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1 rounded-xl">⬅️ HUB</a>
+        </div>
+        <div id="board" class="grid grid-cols-8 gap-0.5 bg-slate-950 p-1 rounded-xl w-full"></div>
+    </div>
+    <script>
+        const initialBoard = [
+            ['♜','♞','♝','♛','♚','♝','♞','♜'], ['♟','♟','♟','♟','♟','♟','♟','♟'],
+            ['','','','','','','',''], ['','','','','','','',''], ['','','','','','','',''], ['','','','','','','',''],
+            ['♙','♙','♙','♙','♙','♙','♙','♙'], ['♖','♘','♗','♕','♔','♗','♘','♖']
+        ];
+        let board = JSON.parse(JSON.stringify(initialBoard)), selected = null, grid = document.getElementById('board');
+        function draw() {
+            grid.innerHTML = '';
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
+                    let cell = document.createElement('div');
+                    cell.className = `cell-chess ${ (r+c)%2===0 ? 'bg-slate-800 text-gray-200':'bg-slate-950 text-amber-600'}`;
+                    if(selected && selected.r===r && selected.c===c) cell.classList.add('bg-blue-900/60');
+                    cell.innerText = board[r][c]; cell.onclick = () => clickCell(r,c);
+                    grid.appendChild(cell);
+                }
+            }
+        }
+        function clickCell(r,c) {
+            if(!selected) { if(board[r][c]!=="") selected = {r,c}; } 
+            else { board[r][c] = board[selected.r][selected.c]; board[selected.r][selected.c] = ''; selected = null; }
+            draw();
+        }
+        draw();
+    </script>
+</body>
+</html>
