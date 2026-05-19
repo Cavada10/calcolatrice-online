@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Muro - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0b0f19; color: #f9fafb; font-family: system-ui, sans-serif; }
+        .cell-board { aspect-ratio: 1; background-color: #151f32; transition: all 0.2s; }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center p-4">
+    <div class="w-full max-w-[500px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black text-blue-500">🧱 1. IL MURO (QUORIDOR)</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div class="w-full grid grid-cols-2 gap-2 text-[11px] font-mono p-2 bg-slate-950 border border-slate-800 rounded-xl text-center mb-4">
+            <div id="turn-display">Turno: P1 (Blu)</div>
+            <div id="walls-count">Muri: P1: 10 | P2: 10</div>
+        </div>
+        <div class="w-full flex space-x-2 mb-4">
+            <button id="m-move" onclick="setMode('move')" class="flex-1 py-1.5 rounded-xl text-xs font-black bg-blue-600 text-white uppercase">Muovi</button>
+            <button id="m-wall" onclick="setMode('wall')" class="flex-1 py-1.5 rounded-xl text-xs font-black bg-slate-800 text-gray-400 uppercase">Muro</button>
+        </div>
+        <div class="w-full bg-slate-950 p-2 rounded-2xl border border-slate-800">
+            <div id="board" class="grid grid-cols-9 gap-1.5 w-full"></div>
+        </div>
+        <div class="w-full grid grid-cols-2 gap-2 mt-4">
+            <button onclick="initBoard()" class="py-2 bg-slate-800 font-bold text-xs rounded-xl">RESET</button>
+            <button onclick="confirmAction()" class="py-2 bg-green-600 font-black text-xs rounded-xl">CONFERMA MOSSA</button>
+        </div>
+    </div>
+    <script>
+        let p1 = { x: 4, y: 0, walls: 10, targetY: 8, char: '🔷' };
+        let p2 = { x: 4, y: 8, walls: 10, targetY: 0, char: '🔶' };
+        let turn = 1, mode = 'move', pending = null;
+        let hWalls = Array(8).fill().map(() => Array(8).fill(false));
+        let vWalls = Array(8).fill().map(() => Array(8).fill(false));
+
+        function initBoard() {
+            let b = document.getElementById('board'); b.innerHTML = '';
+            for(let y=0; y<9; y++) {
+                for(let x=0; x<9; x++) {
+                    let c = document.createElement('div');
+                    c.className = "cell-board rounded flex items-center justify-center text-lg cursor-pointer relative";
+                    c.onclick = () => handleClick(x,y);
+                    if(p1.x===x && p1.y===y) c.innerText = p1.char;
+                    if(p2.x===x && p2.y===y) c.innerText = p2.char;
+                    if(y<8 && x<8 && hWalls[y][x]) { let w=document.createElement('div'); w.className="absolute bottom-[-4px] left-0 right-[-6px] h-[4px] bg-red-500 z-10"; c.appendChild(w); }
+                    if(x<8 && y<8 && vWalls[y][x]) { let w=document.createElement('div'); w.className="absolute right-[-4px] top-0 bottom-[-6px] w-[4px] bg-red-500 z-10"; c.appendChild(w); }
+                    b.appendChild(c);
+                }
+            }
+            document.getElementById('turn-display').innerText = turn===1 ? "Turno: P1 (Blu)" : "Turno: P2 (Arancio)";
+            document.getElementById('walls-count').innerText = `Muri: P1: ${p1.walls} | P2: ${p2.walls}`;
+        }
+
+        function setMode(m) { mode = m; document.getElementById('m-move').className = m==='move'?'flex-1 py-1.5 rounded-xl text-xs font-black bg-blue-600 text-white uppercase':'flex-1 py-1.5 rounded-xl text-xs font-black bg-slate-800 text-gray-400 uppercase'; document.getElementById('m-wall').className = m==='wall'?'flex-1 py-1.5 rounded-xl text-xs font-black bg-blue-600 text-white uppercase':'flex-1 py-1.5 rounded-xl text-xs font-black bg-slate-800 text-gray-400 uppercase'; pending=null; }
+        
+        function handleClick(x,y) {
+            let active = turn === 1 ? p1 : p2;
+            if(mode === 'move') {
+                if(Math.abs(x-active.x)+Math.abs(y-active.y) === 1) {
+                    pending = { type:'move', x:x, y:y };
+                    alert("Mossa adiacente selezionata. Conferma!");
+                }
+            } else {
+                if(active.walls <= 0 || x>=8 || y>=8) return;
+                let t = prompt("H = Orizzontale, V = Verticale").toUpperCase();
+                if(t==='H' || t==='V') pending = { type: t==='H'?'wall_h':'wall_v', x:x, y:y };
+            }
+        }
+
+        function checkBFS(p) {
+            let q = [{x:p.x, y:p.y}], v = new Set([`${p.x},${p.y}`]);
+            while(q.length > 0) {
+                let curr = q.shift(); if(curr.y === p.targetY) return true;
+                let dirs = [{x:0,y:-1},{x:0,y:1},{x:-1,y:0},{x:1,y:0}];
+                for(let d of dirs) {
+                    let nx=curr.x+d.x, ny=curr.y+d.y;
+                    if(nx>=0&&nx<9&&ny>=0&&ny<9&&!v.has(`${nx},${ny}`)) {
+                        v.add(`${nx},${ny}`); q.push({x:nx, y:ny});
+                    }
+                }
+            }
+            return false;
+        }
+
+        function confirmAction() {
+            if(!pending) return;
+            if(pending.type === 'move') {
+                if(turn===1) { p1.x=pending.x; p1.y=pending.y; } else { p2.x=pending.x; p2.y=pending.y; }
+            } else {
+                if(pending.type === 'wall_h') hWalls[pending.y][pending.x] = true;
+                if(pending.type === 'wall_v') vWalls[pending.y][pending.x] = true;
+                if(!checkBFS(p1) || !checkBFS(p2)) {
+                    if(pending.type === 'wall_h') hWalls[pending.y][pending.x] = false;
+                    if(pending.type === 'wall_v') vWalls[pending.y][pending.x] = false;
+                    alert("BFS RIFIUTATO: Blocca totalmente la via!"); pending=null; return;
+                }
+                if(turn===1) p1.walls--; else p2.walls--;
+            }
+            if(p1.y===p1.targetY) { alert("P1 VINCE!"); reset(); return; }
+            if(p2.y===p2.targetY) { alert("P2 VINCE!"); reset(); return; }
+            turn = turn===1?2:1; pending=null; initBoard();
+        }
+        function reset() { hWalls.fill(false); vWalls.fill(false); p1.x=4; p1.y=0; p1.walls=10; p2.x=4; p2.y=8; p2.walls=10; turn=1; initBoard(); }
+        initBoard();
+    </script>
+</body>
+</html>
