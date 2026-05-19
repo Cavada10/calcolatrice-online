@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Arena - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] text-gray-100 p-4">
+    <div class="w-full max-w-[450px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black text-emerald-500">🐍 2. SNAKE ARENA</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <canvas id="arena" width="300" height="300" class="bg-slate-950 rounded-xl border border-slate-800 mb-4"></canvas>
+        <button onclick="startGame()" class="w-full py-2 bg-emerald-600 font-black text-xs rounded-xl tracking-wider">AVVIA BATTLE</button>
+        <p class="text-[9px] text-gray-500 mt-2 text-center">P1: FRECCE | P2: tasti WASD per muoversi in tempo reale</p>
+    </div>
+    <script>
+        const canvas = document.getElementById('arena'); const ctx = canvas.getContext('2d');
+        let s1, s2, d1, d2, loop;
+        function startGame() {
+            clearInterval(loop);
+            s1 = [{x:5, y:5}]; s2 = [{x:20, y:20}]; d1 = 'RIGHT'; d2 = 'LEFT';
+            loop = setInterval(update, 120);
+        }
+        window.addEventListener('keydown', e => {
+            if(e.key==='ArrowUp' && d1!=='DOWN') d1='UP'; if(e.key==='ArrowDown' && d1!=='UP') d1='DOWN';
+            if(e.key==='ArrowLeft' && d1!=='RIGHT') d1='LEFT'; if(e.key==='ArrowRight' && d1!=='LEFT') d1='RIGHT';
+            if(e.key==='w' && d2!=='DOWN') d2='UP'; if(e.key==='s' && d2!=='UP') d2='DOWN';
+            if(e.key==='a' && d2!=='RIGHT') d2='LEFT'; if(e.key==='d' && d2!=='LEFT') d2='RIGHT';
+        });
+        function update() {
+            let h1 = {...s1[0]}, h2 = {...s2[0]};
+            if(d1==='UP') h1.y--; if(d1==='DOWN') h1.y++; if(d1==='LEFT') h1.x--; if(d1==='RIGHT') h1.x++;
+            if(d2==='UP') h2.y--; if(d2==='DOWN') h2.y++; if(d2==='LEFT') h2.x--; if(d2==='RIGHT') h2.x++;
+            if(h1.x<0||h1.x>=30||h1.y<0||h1.y>=30) return end("GIOCATORE 2 VINCE! P1 Fuori Bordo.");
+            if(h2.x<0||h2.x>=30||h2.y<0||h2.y>=30) return end("GIOCATORE 1 VINCE! P2 Fuori Bordo.");
+            s1.unshift(h1); s1.pop(); s2.unshift(h2); s2.pop();
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,300,300);
+            ctx.fillStyle = '#3b82f6'; s1.forEach(p => ctx.fillRect(p.x*10, p.y*10, 9, 9));
+            ctx.fillStyle = '#f59e0b'; s2.forEach(p => ctx.fillRect(p.x*10, p.y*10, 9, 9));
+        }
+        function end(m) { clearInterval(loop); alert(m); }
+    </script>
+</body>
+</html>
