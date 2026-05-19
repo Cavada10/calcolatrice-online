@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiro alla Fune - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[420px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black text-blue-500">⛏️ 6. TIRO ALLA FUNE</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div id="clock" class="text-3xl font-black font-mono text-red-500 mb-4">10.0s</div>
+        <div class="w-full bg-slate-950 h-6 rounded-full overflow-hidden border border-slate-800 flex mb-6 p-0.5">
+            <div id="bar" class="bg-blue-500 h-full transition-all duration-75" style="width: 50%"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 w-full">
+            <button onclick="clickF(1)" class="py-6 bg-blue-600 rounded-xl font-black text-xs uppercase">TAP P1</button>
+            <button onclick="clickF(2)" class="py-6 bg-amber-600 text-black rounded-xl font-black text-xs uppercase">TAP P2</button>
+        </div>
+    </div>
+    <script>
+        let score=50, time=10.0, active=true;
+        let loop = setInterval(() => {
+            time -= 0.1; document.getElementById('clock').innerText = time.toFixed(1)+"s";
+            if(time<=0){ clearInterval(loop); active=false; alert(score===50?"PAREGGIO!":(score>50?"VINCE P1!":"VINCE P2!")); }
+        }, 100);
+        function clickF(p) { if(!active) return; score += (p===1?1.5:-1.5); if(score>100)score=100; if(score<0)score=0; document.getElementById('bar').style.width = score+"%"; }
+    </script>
+</body>
+</html>
