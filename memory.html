@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Duel - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[420px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black text-emerald-500">🧠 5. MEMORY DUEL</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono p-2 bg-slate-950 border border-slate-800 rounded-xl text-center mb-4 w-full">
+            <div id="s1" class="text-blue-400">P1: 0</div> <div id="s2" class="text-amber-400">P2: 0</div>
+        </div>
+        <div id="grid" class="grid grid-cols-4 gap-2 w-full aspect-square"></div>
+    </div>
+    <script>
+        const icons = ["🔺","🔺","🔷","🔷","⭐","⭐","🔮","🔮","🎯","🎯","🍀","🍀","💀","💀","🎈","🎈"].sort(()=>Math.random()-0.5);
+        let turn=1, p1=0, p2=0, sel=[]; const grid = document.getElementById('grid');
+        function init() {
+            grid.innerHTML = '';
+            icons.forEach((icon, idx) => {
+                let btn = document.createElement('button'); btn.className = "bg-slate-800 rounded-xl text-2xl h-full aspect-square flex items-center justify-center";
+                btn.onclick = () => {
+                    if(sel.length>=2 || btn.innerText!=="") return; btn.innerText = icon; sel.push({btn, icon});
+                    if(sel.length===2) setTimeout(check, 700);
+                };
+                grid.appendChild(btn);
+            });
+        }
+        function check() {
+            let [c1, c2] = sel;
+            if(c1.icon === c2.icon) { if(turn===1)p1++; else p2++; }
+            else { c1.btn.innerText=""; c2.btn.innerText=""; turn=turn===1?2:1; }
+            document.getElementById('s1').innerText=`P1: ${p1}`; document.getElementById('s2').innerText=`P2: ${p2}`;
+            sel=[];
+        }
+        init();
+    </script>
+</body>
+</html>
