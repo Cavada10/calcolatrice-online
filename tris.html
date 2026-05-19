@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tris Arena - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[420px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black text-blue-500">❌ 12. TRIS ARENA</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-2 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div id="status" class="mb-6 text-sm font-bold bg-slate-950/50 px-6 py-2 rounded-full border border-slate-800">Turno: <span class="text-blue-400">X</span></div>
+        <div class="grid grid-cols-3 gap-3 w-full aspect-square mb-6">
+            <button onclick="m(0)" id="b0" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(1)" id="b1" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(2)" id="b2" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(3)" id="b3" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(4)" id="b4" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(5)" id="b5" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(6)" id="b6" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(7)" id="b7" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+            <button onclick="m(8)" id="b8" class="bg-slate-950 border border-slate-800 rounded-2xl text-4xl font-black flex items-center justify-center aspect-square"></button>
+        </div>
+    </div>
+    <script>
+        let board=Array(9).fill(""), cur="X", active=true;
+        function m(i) {
+            if(board[i]!==""||!active)return; board[i]=cur; document.getElementById('b'+i).innerText=cur;
+            if(check()){ alert(`VINCE ${cur}!`); active=false; return; }
+            if(!board.includes("")){ alert("PAREGGIO PERFETTO!"); active=false; return; }
+            cur=cur==="X"?"O":"X"; document.getElementById('status').innerText=`Turno: ${cur}`;
+        }
+        function check() { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; return w.some(c=>board[c[0]]==cur&&board[c[1]]==cur&&board[c[2]]==cur); }
+    </script>
+</body>
+</html>
