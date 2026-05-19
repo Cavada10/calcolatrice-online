@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Slot - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[420px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black text-purple-500">🎰 13. CYBER SLOT</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-2 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div class="mb-4 text-sm text-gray-400">Tokens: <span id="s-coins" class="text-amber-400 font-bold">500</span> 🪙</div>
+        <div class="grid grid-cols-3 gap-4 w-full mb-6 text-4xl bg-slate-950 p-4 rounded-xl text-center font-bold">
+            <div id="r0">🎰</div> <div id="r1">🎰</div> <div id="r2">🎰</div>
+        </div>
+        <button onclick="spin()" class="w-full py-3 bg-purple-600 font-black text-sm rounded-xl">SPIN (50 🪙)</button>
+    </div>
+    <script>
+        const sym = ["🍒", "🍋", "🍇", "💎", "⭐", "🍀"];
+        let coins = parseInt(localStorage.getItem('sys_coins')) || 500;
+        document.getElementById('s-coins').innerText = coins;
+        function spin() {
+            if(coins < 50) { alert("Fondi Terminati!"); return; }
+            coins -= 50; localStorage.setItem('sys_coins', coins); document.getElementById('s-coins').innerText = coins;
+            let res = [sym[Math.floor(Math.random()*6)], sym[Math.floor(Math.random()*6)], sym[Math.floor(Math.random()*6)]];
+            document.getElementById('r0').innerText=res[0]; document.getElementById('r1').innerText=res[1]; document.getElementById('r2').innerText=res[2];
+            if(res[0]===res[1] && res[1]===res[2]) { coins += 500; alert("JACKPOT! +500 Monete!"); }
+            else if(res[0]===res[1] || res[1]===res[2] || res[0]===res[2]) { coins += 60; }
+            localStorage.setItem('sys_coins', coins); document.getElementById('s-coins').innerText = coins;
+        }
+    </script>
+</body>
+</html>
