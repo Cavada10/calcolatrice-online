@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forza 4 - Gaming Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="flex flex-col h-screen w-screen items-center justify-center bg-[#0b0f19] p-4">
+    <div class="w-full max-w-[420px] bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+            <h1 class="text-lg font-black text-blue-500">🔵 11. FORZA 4</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded-xl font-bold">⬅️ HUB</a>
+        </div>
+        <div id="status" class="mb-4 text-xs font-bold text-blue-400 bg-slate-950 p-2 px-4 rounded-full border border-slate-800">Turno: GIOCATORE 1</div>
+        <div id="grid" class="grid grid-cols-7 gap-1.5 p-3 bg-blue-900 rounded-2xl w-full"></div>
+    </div>
+    <script>
+        let board = Array(6).fill().map(() => Array(7).fill(0)), turn = 1, active = true, grid = document.getElementById('grid');
+        function render() {
+            grid.innerHTML = '';
+            for(let r=0; r<6; r++) {
+                for(let c=0; c<7; c++) {
+                    let cell = document.createElement('div'); cell.className = `aspect-square rounded-full flex border border-blue-950 ${board[r][c]===1 ? 'bg-blue-500' : board[r][c]===2 ? 'bg-amber-500' : 'bg-slate-950'}`;
+                    cell.onclick = () => {
+                        if(!active) return;
+                        for(let row=5; row>=0; row--) {
+                            if(board[row][c] === 0) {
+                                board[row][c] = turn;
+                                if(checkWin(row, c)) { document.getElementById('status').innerText = `🎉 MATCH CHIUSO! VINCE P${turn}`; active = false; } 
+                                else { turn = turn === 1 ? 2 : 1; document.getElementById('status').innerText = `Turno: GIOCATORE ${turn}`; }
+                                render(); return;
+                            }
+                        }
+                    }; grid.appendChild(cell);
+                }
+            }
+        }
+        function checkWin(r, c) { let p = board[r][c]; return checkDir(r,c,0,1,p) || checkDir(r,c,1,0,p) || checkDir(r,c,1,1,p) || checkDir(r,c,1,-1,p); }
+        function checkDir(r,c,dr,dc,p) { let count = 0; for(let i=-3; i<=3; i++) { let nr = r+i*dr, nc = c+i*dc; if(nr>=0 && nr<6 && nc>=0 && nc<7 && board[nr][nc]===p) { if(++count === 4) return true; } else count = 0; } return false; }
+        render();
+    </script>
+</body>
+</html>
